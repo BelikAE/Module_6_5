@@ -21,7 +21,6 @@ namespace Module_6_5
 
             try
             {
-
                 List<Room> rooms = GetRooms(doc);
 
                 if (rooms.Count == 0)
@@ -30,9 +29,7 @@ namespace Module_6_5
                     return Result.Cancelled;
                 }
 
-
                 List<Room> sortedRooms = SortRooms(rooms);
-
 
                 using (Transaction t = new Transaction(doc, "Автонумерация помещений"))
                 {
@@ -41,7 +38,8 @@ namespace Module_6_5
                     int counter = 1;
                     foreach (Room room in sortedRooms)
                     {
-                        SetRoomNumber(room, counter.ToString());
+                        Parameter numberParam = room.get_Parameter(BuiltInParameter.ROOM_NUMBER);
+                        numberParam.Set(counter.ToString());
                         counter++;
                     }
 
@@ -75,16 +73,5 @@ namespace Module_6_5
                 .ToList();
         }
 
-        private void SetRoomNumber(Room room, string number)
-        {
-            Parameter numberParam = room.get_Parameter(BuiltInParameter.ROOM_NUMBER);
-            if (numberParam != null && !numberParam.IsReadOnly)
-            {
-                if (numberParam.StorageType == StorageType.String)
-                {
-                    numberParam.Set(number);
-                }
-            }
-        }
     }
 }
